@@ -12,7 +12,7 @@ async function startProgram() {
 	//  Loop and detect hands
 	setInterval(async () => {
 			const imageBuffer = await screenshot();
-			const imageTensor = tf.node.decodeImage(new Uint8Array(results[1]), 3);
+			const imageTensor = tf.node.decodeImage(imageBuffer);
 
 			// fs.writeFile("test.jpg", imageBuffer, (err) => {
 			// 	if (err) return console.error(err)
