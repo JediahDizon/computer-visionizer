@@ -6,19 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-		"build": "electron-packager . simple-aimbot --platform=win32 --arch=x64"
+    "build": "electron-packager . simple-aimbot --platform=win32 --arch=x64"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@tensorflow-models/coco-ssd": "^2.2.2",
     "@tensorflow/tfjs-node": "^3.8.0",
-    "desktop-screenshot": "^0.1.1",
+    "@tensorflow/tfjs-node-gpu": "^3.8.0",
     "electron-overlay-window": "^2.0.1",
-    "ffmpeg-static": "^4.4.0",
-    "fluent-ffmpeg": "^2.1.2",
     "robotjs": "^0.6.0",
-    "screenshot-desktop": "^1.12.6",
     "src": "file:src",
     "windows-desktop-duplication": "^1.0.3"
   },
