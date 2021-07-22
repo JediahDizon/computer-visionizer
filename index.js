@@ -2,22 +2,26 @@ const fs = require("fs");
 const tf = require("@tensorflow/tfjs-node")
 const cocossd = require("@tensorflow-models/coco-ssd");
 const screenshot = require("screenshot-desktop");
-// const BufferImage = require("buffer-image");
 const Electron = require("electron");
 const { overlayWindow } = require("electron-overlay-window");
+// const ffmpeg = require("ffmpeg-static");
+const ffmpeg = require("fluent-ffmpeg");
+const { spawn } = require("child_process");
 
-// Main function
+let net;
 let width = 3240;
 let height = 2160
-let net;
 
-async function startProgram() {
-	Electron.app.on("ready", async () => {
+function startProgram() {
+	Electron.app.on("ready", async () => {	
+		// Load Neural Network
+		net = await cocossd.load();
+
 		const { app, BrowserWindow } = Electron;
 		const window = new BrowserWindow({
-			width,
-			height,
 			webPreferences: {
+				width,
+				height,
 				nodeIntegration: true,
 				contextIsolation: false,
 			},
@@ -27,24 +31,68 @@ async function startProgram() {
 		window.loadURL(`file://${__dirname}/index.html`);
 		// NOTE: if you close Dev Tools overlay window will lose transparency
 		window.webContents.openDevTools({ mode: "detach", activate: false });
-		overlayWindow.attachTo(window, "Untitled - Notepad");
+		window.setIgnoreMouseEvents(true)
+		overlayWindow.attachTo(window, "dog - Google Search - Google Chrome");
 
-		Electron.globalShortcut.register("CmdOrCtrl + f1", async () => {
-			await cocossd.load();
+		// Send Config to front-end
+		const dimensions = { width, height }
+		window.webContents.send("hello-world", dimensions);
 
-			const toSend = { width, height };
-			window.webContents.send("hello-world", toSend)
-		});
-
-		Electron.globalShortcut.register("CmdOrCtrl + f2", async () => {
+		async function loop() {
+			// Slow but works
 			const imageBuffer = await screenshot();
 			const imageTensor = tf.node.decodeImage(imageBuffer);
-
-			// Make Detections
-			const obj = await net.detect(imageTensor);
-			const toSend = { image, class: obj.class, bbox: obj.bbox };
+			const detections = await net.detect(imageTensor);
+			const toSend = {
+				detections
+			};
 			window.webContents.send("draw", toSend);
-		})
+			setTimeout(loop, 10);
+
+			// process.stdout.on("data", async chunk => {
+			// 	try {
+			// 		// Fast but not work lmao
+			// 		// const imageBuffer = new Uint8Array(chunk);
+			// 		// const imageTensor = tf.node.decodeImage(imageBuffer);
+			// 		// const detections = await net.detect({ data: imageBuffer, width, height });
+	
+					
+			// 		const imageTensor = tf.node.decodeImage(chunk);
+			// 		console.log(imageTensor.shape);
+			// 		// const detections = await net.detect(imageTensor);
+	
+	
+			// 		console.log(detections);
+	
+			// 		const toSend = { 
+			// 			image: chunk, 
+			// 			detections,
+			// 		};
+			// 		window.webContents.send("draw", toSend);
+			// 	} catch(e) {
+			// 		console.error(e);
+			// 	} 
+			// });
+	
+			// process.stdout.on("end", async () => {
+			// 	const imageBuffer = new Uint8Array(accumulator);
+			// 	const imageTensor = tf.node.decodeImage(imageBuffer);
+			// 	const detections = await net.detect(imageTensor);
+			// 	console.log(detections);
+	
+			// 	const toSend = {
+			// 		detections
+			// 	};
+			// 	window.webContents.send("draw", toSend);
+			// 	console.log("All the data in the file has been read");
+			// 	setTimeout(loop, 10);
+			// })
+			// process.stdout.on('close', function (err) {
+			// 	console.log('Stream has been destroyed and file has been closed');
+			// });
+		}
+
+		setTimeout(loop, 10);
 	});
 }
 
