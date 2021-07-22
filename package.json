@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+		"build": "electron-packager . simple-aimbot --platform=win32 --arch=x64"
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +23,6 @@
     "windows-desktop-duplication": "^1.0.3"
   },
   "devDependencies": {
-    "electron": "^13.1.7",
-    "electron-packager": "^15.3.0"
+    "electron": "^13.1.7"
   }
 }
