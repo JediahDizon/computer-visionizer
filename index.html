@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<title>overlay-demo</title>
+	</head>
+
+	<body>
+		<canvas id="canvas"></canvas>
+		<script>
+			const electron = require("electron");
+			const canvas = document.getElementById("canvas");
+
+			electron.ipcRenderer.on("hello-world", (e, payload) => {
+				canvas.width = payload.width;
+				canvas.height = payload.height;
+			});
+
+			electron.ipcRenderer.on("draw", (e, payload) => {
+				// const toDraw = await canvas.loadImage(payload.image);
+				const backgroundImage = new Image(payload.image);
+				ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+				for(let toDraw of payload.bbox) {
+					drawBounds(toDraw.bbox, toDraw.class);
+				}
+			});
+
+			function drawBounds(bbox, text) {
+				const ctx = canvas.getContext("2d");
+				ctx.fillStyle = "red";
+				ctx.rect(bbox[0], bbox[1], bbox[2], bbox[3]);
+				ctx.stroke();
+			}
+		</script>
+	</body>
+</html>
