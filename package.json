@@ -22,6 +22,7 @@
     "windows-desktop-duplication": "^1.0.3"
   },
   "devDependencies": {
-    "electron": "^13.1.7"
+    "electron": "^13.1.7",
+    "electron-packager": "^15.3.0"
   }
 }
