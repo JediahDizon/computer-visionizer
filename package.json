@@ -12,12 +12,14 @@
   "dependencies": {
     "@tensorflow-models/coco-ssd": "^2.2.2",
     "@tensorflow/tfjs-node": "^3.8.0",
+    "desktop-screenshot": "^0.1.1",
     "electron-overlay-window": "^2.0.1",
     "ffmpeg-static": "^4.4.0",
     "fluent-ffmpeg": "^2.1.2",
     "robotjs": "^0.6.0",
     "screenshot-desktop": "^1.12.6",
-    "src": "file:src"
+    "src": "file:src",
+    "windows-desktop-duplication": "^1.0.3"
   },
   "devDependencies": {
     "electron": "^13.1.7"

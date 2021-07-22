@@ -21,21 +21,19 @@
 			});
 
 			electron.ipcRenderer.on("draw", async (e, payload) => {
-				// const toDraw = await canvas.loadImage(payload.image);
-				// const blob = new Blob([payload.image], {type: "image/jpg"});
-				// const url = URL.createObjectURL(blob);
-				// const img = new Image();
-				// img.width = canvas.width;
-				// img.iehgt = canvas.height;
-				// img.src = url;
-				
-				// const ctx = canvas.getContext("2d");
-				// ctx.drawImage(img, 0, 0);
-
 				const ctx = canvas.getContext("2d");
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				// const blob = new Blob([payload.image], {type: "image/jpg"});
+				// const url = URL.createObjectURL(blob);
+				// const img = new Image(canvas.width, canvas.height);
+				// img.src = url;
+
+				// ctx.drawImage(img, 0, 0);
+
+				drawBounds([0, 0, canvas.width, canvas.height], new Date().valueOf());
 				for(let toDraw of payload.detections) {
-					drawBounds(toDraw.bbox, toDraw.class);
+					drawBounds(toDraw.bbox, toDraw.class + ": " + Math.floor(toDraw.score * 100));
 				}
 			});
 
@@ -43,9 +41,15 @@
 				const ctx = canvas.getContext("2d");
 				ctx.beginPath();
 				ctx.rect(bbox[0], bbox[1], bbox[2], bbox[3]);
-				ctx.fillText(`${text}\n${JSON.stringify(bbox, null, "\n")}`, bbox[0], bbox[1] + 20);
+				ctx.fillText(`${text}`, bbox[0], bbox[1] + 30);
 				ctx.stroke();
 			}
 		</script>
 	</body>
+
+	<style>
+		body {
+			overflow: hidden;
+		}
+	</style>
 </html>
