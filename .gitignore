@@ -1,2 +1,7 @@
+<<<<<<< HEAD
+/node_modules
+/node_modules/*
+=======
 node_modules
 simple-aimbot-win32-x64
+>>>>>>> a950be00e569a962b0407fba3e9a4bb6accb7360
