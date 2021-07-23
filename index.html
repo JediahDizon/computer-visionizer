@@ -1,0 +1,55 @@
+<html>
+	<head>
+		<title>overlay-demo</title>
+	</head>
+
+	<body>
+		<canvas id="canvas"></canvas>
+		<script>
+			const electron = require("electron");
+			const canvas = document.getElementById("canvas");
+
+			electron.ipcRenderer.on("hello-world", (e, payload) => {
+				canvas.width = payload.width;
+				canvas.height = payload.height;
+				
+				const ctx = canvas.getContext("2d");
+				ctx.font = "30px Arial";
+				ctx.fillStyle = "red"
+				ctx.strokeStyle = "red";
+				ctx.lineWidth = 5;
+			});
+
+			electron.ipcRenderer.on("draw", async (e, payload) => {
+				const ctx = canvas.getContext("2d");
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+				// const blob = new Blob([payload.image], {type: "image/jpg"});
+				// const url = URL.createObjectURL(blob);
+				// const img = new Image(canvas.width, canvas.height);
+				// img.src = url;
+
+				// ctx.drawImage(img, 0, 0);
+
+				drawBounds([0, 0, canvas.width, canvas.height], new Date().valueOf());
+				for(let toDraw of payload.detections) {
+					drawBounds(toDraw.bbox, toDraw.class + ": " + Math.floor(toDraw.score * 100));
+				}
+			});
+
+			function drawBounds(bbox, text) {
+				const ctx = canvas.getContext("2d");
+				ctx.beginPath();
+				ctx.rect(bbox[0], bbox[1], bbox[2], bbox[3]);
+				ctx.fillText(`${text}`, bbox[0], bbox[1] + 30);
+				ctx.stroke();
+			}
+		</script>
+	</body>
+
+	<style>
+		body {
+			overflow: hidden;
+		}
+	</style>
+</html>
