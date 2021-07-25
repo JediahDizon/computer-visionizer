@@ -66,10 +66,10 @@ function startProgram() {
 		// 	ffmpeg,
 		// 	[
 		// 		"-f", "gdigrab",
-    //     "-i", "desktop",
+		// 		"-i", "desktop",
 		// 		"-f", "image2",
-    //     "-"
-    // 	],
+		// 		"-"
+		// 	],
 		// 	{ stdio: "pipe" }
 		// );
 
@@ -112,11 +112,13 @@ function startProgram() {
 		duplicateDesktop.initialize();
 		duplicateDesktop.startAutoCapture(10);
 		duplicateDesktop.on("frame", async frame => {
-			// const imageData = bmp.encode(frame);
-			// const imageData = tf.browser.fromPixels(img);
 			const detections = await model.executeAsync(frame);
-			const toSend = detections[0].map((detection, index) => ({ box: detection, probability: detections[1][index], classification: Classes[detections[2][index]] }));
-			// console.log(toSend[0]);
+			const toSend = detections[0].map((detection, index) => ({
+				box: detection,
+				probability: detections[1][index],
+				classification: Classes[detections[2][index]]
+			}));
+
 			window.webContents.send("draw", toSend);
 		});
 	});
