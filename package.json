@@ -12,10 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@microsoft/customvision-tfjs-node": "^1.1.0",
-    "bmp-js": "^0.1.0",
     "electron-overlay-window": "^2.0.1",
     "robotjs": "^0.6.0",
-    "screenshot-desktop": "^1.12.7",
     "src": "file:src",
     "windows-desktop-duplication": "^1.0.3"
   },

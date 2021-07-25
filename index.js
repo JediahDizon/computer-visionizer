@@ -1,13 +1,8 @@
 const path = require("path");
-// const tf = require("@tensorflow/tfjs-node");
 const cvstfjs = require('@microsoft/customvision-tfjs-node');
-
-// const tf = require("@tensorflow/tfjs-node-gpu");
-// const cocossd = require("@tensorflow-models/coco-ssd");
 const Electron = require("electron");
 const { overlayWindow } = require("electron-overlay-window");
 const { DesktopDuplication } = require("windows-desktop-duplication");
-const bmp = require("bmp-js");
 
 let model;
 const Classes = {
