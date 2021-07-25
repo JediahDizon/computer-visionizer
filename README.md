@@ -4,6 +4,8 @@ Aim assist using AI
 
 ### Notes
 
+Can't seem to import TFJS and Custom Vision together. When using a model, construct the TF object within the propritary package.
+
 #### Robot JS
 http://robotjs.io/docs/electron
 

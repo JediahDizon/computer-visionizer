@@ -1,20 +1,23 @@
+const path = require("path");
 // const tf = require("@tensorflow/tfjs-node");
-const tf = require("@tensorflow/tfjs-node-gpu");
+const cvstfjs = require('@microsoft/customvision-tfjs-node');
+
+// const tf = require("@tensorflow/tfjs-node-gpu");
 const cocossd = require("@tensorflow-models/coco-ssd");
 const Electron = require("electron");
 const { overlayWindow } = require("electron-overlay-window");
-const { DesktopDuplication } = require('windows-desktop-duplication');
+const { DesktopDuplication } = require("windows-desktop-duplication");
+const bmp = require("bmp-js");
 
+let model;
 let net;
 let width = 3240;
 let height = 2160;
-let windowName = "Origin"; // "Battlefield™ V";
+let windowName = "Battlefield™ V";
 
 function startProgram() {
-	Electron.app.on("ready", async () => {	
-		// Load Neural Network
-		net = await cocossd.load();
-
+	
+	Electron.app.on("ready", async () => {
 		const { app, BrowserWindow } = Electron;
 		const window = new BrowserWindow({
 			webPreferences: {
@@ -35,6 +38,10 @@ function startProgram() {
 		// Send Config to front-end
 		const dimensions = { width, height }
 		window.webContents.send("hello-world", dimensions);
+		// window.show();
+
+		model = new cvstfjs.ObjectDetectionModel();
+		await model.loadModelAsync("file://" + path.join(__dirname, "/res/model.json"));
 
 
 		// ========================================================
@@ -43,6 +50,7 @@ function startProgram() {
 		
 		// async function loop() {
 		// 	// Slow but works
+		// 	const screenshot = require("screenshot-desktop");
 		// 	const imageBuffer = await screenshot({ screen: windowName });
 		// 	const imageTensor = tf.node.decodeImage(imageBuffer);
 		// 	const detections = await net.detect(imageTensor);
@@ -107,16 +115,10 @@ function startProgram() {
 		duplicateDesktop.initialize();
 		duplicateDesktop.startAutoCapture(10);
 		duplicateDesktop.on("frame", async frame => {
-			// Compressing doesn't speed up performance, it slows it down
-			//
-			// const jpegImage = jpeg.encode(frame, 100);
-			// const imageTensor = tf.node.decodeImage(jpegImage.data);
-			// const detections = await net.detect(imageTensor);
-			
-			const detections = await net.detect(frame);
-
-			const toSend = { detections };
-			window.webContents.send("draw", toSend);
+			// const imageData = bmp.encode(frame);
+			// const imageData = tf.browser.fromPixels(img);
+			const detections = await model.executeAsync(frame);
+			window.webContents.send("draw", { detections });
 		});
 	});
 }

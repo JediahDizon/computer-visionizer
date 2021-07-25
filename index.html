@@ -30,17 +30,18 @@
 				// img.src = url;
 
 				// ctx.drawImage(img, 0, 0);
+				const boxes = payload.detections[0];
 
 				drawBounds([0, 0, canvas.width, canvas.height], new Date().valueOf());
-				for(let toDraw of payload.detections) {
-					drawBounds(toDraw.bbox, toDraw.class + ": " + Math.floor(toDraw.score * 100));
+				for(let toDraw of boxes) {
+					drawBounds(toDraw);
 				}
 			});
 
-			function drawBounds(bbox, text) {
+			function drawBounds(bbox, text = "") {
 				const ctx = canvas.getContext("2d");
 				ctx.beginPath();
-				ctx.rect(bbox[0], bbox[1], bbox[2], bbox[3]);
+				ctx.rect(canvas.width * bbox[0], canvas.height * bbox[1], canvas.width * (bbox[2] - bbox[0]), canvas.height * (bbox[3] - bbox[1]));
 				ctx.fillText(`${text}`, bbox[0], bbox[1] + 30);
 				ctx.stroke();
 			}
