@@ -3,20 +3,22 @@ const path = require("path");
 const cvstfjs = require('@microsoft/customvision-tfjs-node');
 
 // const tf = require("@tensorflow/tfjs-node-gpu");
-const cocossd = require("@tensorflow-models/coco-ssd");
+// const cocossd = require("@tensorflow-models/coco-ssd");
 const Electron = require("electron");
 const { overlayWindow } = require("electron-overlay-window");
 const { DesktopDuplication } = require("windows-desktop-duplication");
 const bmp = require("bmp-js");
 
 let model;
-let net;
-let width = 3240;
-let height = 2160;
-let windowName = "Battlefield™ V";
+const Classes = {
+	0: "Person"
+};
+
+let width = 3440;
+let height = 1440;
+let windowName = "Origin";
 
 function startProgram() {
-	
 	Electron.app.on("ready", async () => {
 		const { app, BrowserWindow } = Electron;
 		const window = new BrowserWindow({
@@ -31,7 +33,7 @@ function startProgram() {
 
 		window.loadURL(`file://${__dirname}/index.html`);
 		// NOTE: if you close Dev Tools overlay window will lose transparency
-		window.webContents.openDevTools({ mode: "detach", activate: false });
+		// window.webContents.openDevTools({ mode: "detach", activate: false });
 		window.setIgnoreMouseEvents(true);
 		overlayWindow.attachTo(window, windowName);
 
@@ -47,7 +49,7 @@ function startProgram() {
 		// ========================================================
 		// DEPREATED
 		// Screenshot function too slow
-		
+
 		// async function loop() {
 		// 	// Slow but works
 		// 	const screenshot = require("screenshot-desktop");
@@ -66,13 +68,13 @@ function startProgram() {
 		// Can't stream direct video to model because model needs complete picture everytime
 
 		// const process = spawn(
-		// 	ffmpeg, 
+		// 	ffmpeg,
 		// 	[
 		// 		"-f", "gdigrab",
     //     "-i", "desktop",
 		// 		"-f", "image2",
     //     "-"
-    // 	], 
+    // 	],
 		// 	{ stdio: "pipe" }
 		// );
 
@@ -87,7 +89,7 @@ function startProgram() {
 		// 		window.webContents.send("draw", toSend);
 		// 	} catch(e) {
 		// 		console.error(e);
-		// 	} 
+		// 	}
 		// });
 
 		// process.stdout.on("end", async () => {
@@ -106,7 +108,7 @@ function startProgram() {
 		// 	console.log('Stream has been destroyed and file has been closed');
 		// });
 
-		
+
 		// ========================================================
 		// WORKING
 		// Still slow but maybe just a GPU problem
@@ -118,7 +120,9 @@ function startProgram() {
 			// const imageData = bmp.encode(frame);
 			// const imageData = tf.browser.fromPixels(img);
 			const detections = await model.executeAsync(frame);
-			window.webContents.send("draw", { detections });
+			const toSend = detections[0].map((detection, index) => ({ box: detection, probability: detections[1][index], classification: Classes[detections[2][index]] }));
+			// console.log(toSend[0]);
+			window.webContents.send("draw", toSend);
 		});
 	});
 }
