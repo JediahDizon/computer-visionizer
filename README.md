@@ -20,7 +20,7 @@ http://robotjs.io/docs/electron
 
 ## Troubleshoot
 ### TFJS Bindings Errors
-https://github.com/nodejs/node-gyp#on-windows
+`npm install node-pre-gyp -g`
 
 Used for building the TFJS libraries. Maybe due to the wrong Python version, it fails to build from `npm install` command, therefore we use `node-pre-gyp` to manually build it
 
